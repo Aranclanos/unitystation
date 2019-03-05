@@ -12,6 +12,25 @@ public class ObjectBehaviour : PushPull
 	//Inspector is controlled by ObjectBehaviourEditor
 	//Please expose any properties you need in there
 
+	//The object that this object is contained inside
+	public ObjectBehaviour parentContainer = null;
+	private Vector3 lastNonHiddenPosition = new Vector3();
+	//returns position of highest object this object is contained in
+    public Vector3 AssumedLocation()
+    {
+		//If this object is contained in another, run until highest layer layer is reached
+        if (parentContainer != null)
+        {
+            lastNonHiddenPosition = parentContainer.AssumedLocation();
+        }
+		else if (transform.position != TransformState.HiddenPos)
+		{
+			lastNonHiddenPosition = transform.position;
+		}
+
+        return lastNonHiddenPosition;
+    }
+
 	public override void OnVisibilityChange(bool state)
 	{
 		if (registerTile.ObjectType == ObjectType.Player)
