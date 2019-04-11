@@ -400,8 +400,8 @@ public class PlayerList : NetworkBehaviour
 			var oldConnectedPlayer = loggedOff[i];
 			if (oldConnectedPlayer.SteamId == currentConnectedPlayer.SteamId)
 			{
-				Rejoin(joinedViewer, currentConnectedPlayer, oldConnectedPlayer);
-				return;
+				//Rejoin(joinedViewer, currentConnectedPlayer, oldConnectedPlayer);
+				break;
 			}
 		}
 
@@ -410,6 +410,8 @@ public class PlayerList : NetworkBehaviour
 		// Player is not rejoining so add him to the playerlist
 		Instance.Add(currentConnectedPlayer);
 	}
+
+
 
 	[Server]
 	public void Rejoin(JoinedViewer joinedViewer, ConnectedPlayer currentConnectedPlayer,
@@ -427,16 +429,16 @@ public class PlayerList : NetworkBehaviour
 	}
 
 	[Server]
-	public bool IsLoggedOff(ulong steamId)
+	public GameObject IsLoggedOff(ulong steamId)
 	{
 		foreach (var player in loggedOff)
 		{
 			if (player.SteamId == steamId)
 			{
-				return true;
+				return player.GameObject;
 			}
 		}
-		return false;
+		return null;
 	}
 }
 

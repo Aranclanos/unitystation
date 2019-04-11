@@ -84,10 +84,10 @@ public class PlayerManager : MonoBehaviour
 
 	public static void SetPlayerForControl(GameObject playerObjToControl)
 	{
+		Logger.Log("HAMISH: PlayerManager.SetPlayerForControl(Gameobject)");
 		LocalPlayer = playerObjToControl;
 		LocalPlayerScript = playerObjToControl.GetComponent<PlayerScript>();
 		Equipment = playerObjToControl.GetComponent<Equipment>();
-
 		PlayerScript =
 			LocalPlayerScript; // Set this on the manager so it can be accessed by other components/managers
 		Camera2DFollow.followControl.target = LocalPlayer.transform;

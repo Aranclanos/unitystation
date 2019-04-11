@@ -14,32 +14,35 @@ public class JoinedViewer : NetworkBehaviour
 	ulong steamId = 1;
 
 	[SyncVar]
-	bool isLoggedOff;
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-        //Add player to player list
-        isLoggedOff = PlayerList.Instance.IsLoggedOff(steamId);
-        Logger.Log($"HAMISH: OnServer() Is logged off = {isLoggedOff}");
-        PlayerList.Instance.JoinCheck(this, new ConnectedPlayer
-        {
-	        Connection = connectionToClient,
-	        GameObject = gameObject,
-	        Job = JobType.NULL,
-	        SteamId = steamId
-        });
-    }
+	GameObject isLoggedOff;
+	public override void OnStartServer()
+	{
+		base.OnStartServer();
+		//Add player to player list
+		isLoggedOff = PlayerList.Instance.IsLoggedOff(steamId);
+		Debug.Log($"HAMISH: OnServer() Is logged off = {isLoggedOff}");
+		PlayerList.Instance.JoinCheck(this, new ConnectedPlayer
+		{
+			Connection = connectionToClient,
+			GameObject = gameObject,
+			Job = JobType.NULL,
+			SteamId = steamId
+		});
+	}
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
         PlayerManager.SetViewerForControl(this);
         UIManager.ResetAllUI();
-        //HAMISHTODO: Check if rejoining before calling this
-        Logger.Log($"HAMISH: OnStartLocalPlayer() Is logged off = {isLoggedOff}");
-        if (!isLoggedOff)
+        if (isLoggedOff == null)
         {
+	        Logger.Log($"HAMISH: isLoggedOff not null: {isLoggedOff}");
 	        UIManager.Display.DetermineGameMode();
+        }
+        else
+        {
+	        CmdRejoin();
         }
         UIManager.SetDeathVisibility(true);
 
@@ -78,5 +81,12 @@ public class JoinedViewer : NetworkBehaviour
     {
         SpawnHandler.RespawnPlayer(connectionToClient, playerControllerId,
             GameManager.Instance.GetRandomFreeOccupation(jobType));
+    }
+
+    [Command]
+    public void CmdRejoin()
+    {
+	    Logger.Log("HAMISH: CmdRejoin()");
+	    SpawnHandler.TransferPlayer(connectionToClient, playerControllerId, isLoggedOff);
     }
 }
