@@ -21,12 +21,12 @@ public class JoinedViewer : NetworkBehaviour
 		//Add player to player list
 		isLoggedOff = PlayerList.Instance.IsLoggedOff(steamId);
 		Debug.Log($"HAMISH: OnServer() Is logged off = {isLoggedOff}");
-		PlayerList.Instance.JoinCheck(this, new ConnectedPlayer
+		PlayerList.Instance.Add(new ConnectedPlayer
 		{
 			Connection = connectionToClient,
 			GameObject = gameObject,
 			Job = JobType.NULL,
-			SteamId = steamId
+            SteamId = steamId
 		});
 	}
 
@@ -37,12 +37,14 @@ public class JoinedViewer : NetworkBehaviour
         UIManager.ResetAllUI();
         if (isLoggedOff == null)
         {
-	        Logger.Log($"HAMISH: isLoggedOff not null: {isLoggedOff}");
+            Debug.Log($"HAMISH: isLoggedOff IS NULL");
 	        UIManager.Display.DetermineGameMode();
-        }
-        else
-        {
-	        CmdRejoin();
+        }else{
+            Debug.Log($"HAMISH: isLoggedOff not null: {isLoggedOff}");
+            CmdRejoin();
+            Debug.Log("ARAN: CALING SET LOCAL PLAYER() YEEHAW");
+            isLoggedOff.GetComponent<PlayerSync>().setLocalPlayer();
+            isLoggedOff.GetComponent<PlayerScript>().Init();
         }
         UIManager.SetDeathVisibility(true);
 
@@ -86,7 +88,7 @@ public class JoinedViewer : NetworkBehaviour
     [Command]
     public void CmdRejoin()
     {
-	    Logger.Log("HAMISH: CmdRejoin()");
+        Debug.Log("HAMISH: CmdRejoin()");
 	    SpawnHandler.TransferPlayer(connectionToClient, playerControllerId, isLoggedOff);
     }
 }

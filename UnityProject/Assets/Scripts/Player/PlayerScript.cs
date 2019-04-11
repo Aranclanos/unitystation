@@ -100,10 +100,11 @@ public class PlayerScript : ManagedNetworkBehaviour
 		playerSprites = GetComponent<UserControlledSprites>();
 	}
 
-	private void Init()
+	public void Init()
 	{
 		if (isLocalPlayer)
 		{
+            Debug.Log("ARAN: UImanager reset shit");
 			UIManager.ResetAllUI();
 			UIManager.SetDeathVisibility(true);
 			UIManager.DisplayManager.SetCameraFollowPos();

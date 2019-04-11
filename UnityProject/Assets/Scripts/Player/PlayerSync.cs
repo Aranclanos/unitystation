@@ -358,12 +358,18 @@ public partial class PlayerSync : NetworkBehaviour, IPushable
 	private void Start()
 	{
 		//Init pending actions queue for your local player
+        
+        if(isServer){
+            Debug.Log("ARAN: server PLAYER SYNC START " + gameObject.name);
+        }else{
+            Debug.Log("ARAN: client PLAYER SYNC START " + gameObject.name);
+        }
 		if (isLocalPlayer)
 		{
-			pendingActions = new Queue<PlayerAction>();
-			UpdatePredictedState();
-			predictedSpeedClient = UIManager.WalkRun.running ? playerMove.RunSpeed : playerMove.WalkSpeed;
-		}
+            setLocalPlayer();
+		}else{
+            Debug.Log("ARAN: REE NOT LOCAL");
+        }
 		//Init pending actions queue for server
 		if (isServer)
 		{
@@ -375,6 +381,13 @@ public partial class PlayerSync : NetworkBehaviour, IPushable
 		registerTile = GetComponent<RegisterTile>();
 		pushPull = GetComponent<PushPull>();
 	}
+
+    public void setLocalPlayer(){
+        Debug.Log("ARAN: IS LOCAL PLAYER");
+        pendingActions = new Queue<PlayerAction>();
+        UpdatePredictedState();
+        predictedSpeedClient = UIManager.WalkRun.running ? playerMove.RunSpeed : playerMove.WalkSpeed;
+    }
 
 	private void Update()
 	{

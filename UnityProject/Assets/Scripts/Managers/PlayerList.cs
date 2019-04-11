@@ -389,52 +389,54 @@ public class PlayerList : NetworkBehaviour
 			RconManager.UpdatePlayerListRcon();
 		}
 	}
+    /* 
+        [Server]
+        public void JoinCheck(JoinedViewer joinedViewer, ConnectedPlayer currentConnectedPlayer)
+        {
+            Debug.Log("ARAN: JoinCheck");
+            for (int i = 0; i < loggedOff.Count; i++)
+            {
+                // Check if player is logged off
+                var oldConnectedPlayer = loggedOff[i];
+                if (oldConnectedPlayer.SteamId == currentConnectedPlayer.SteamId)
+                {
+                    //Rejoin(joinedViewer, currentConnectedPlayer, oldConnectedPlayer);
+                    break;
+                }
+            }
 
-	[Server]
-	public void JoinCheck(JoinedViewer joinedViewer, ConnectedPlayer currentConnectedPlayer)
-	{
-		Debug.Log("ARAN: JoinCheck");
-		for (int i = 0; i < loggedOff.Count; i++)
-		{
-			// Check if player is logged off
-			var oldConnectedPlayer = loggedOff[i];
-			if (oldConnectedPlayer.SteamId == currentConnectedPlayer.SteamId)
-			{
-				//Rejoin(joinedViewer, currentConnectedPlayer, oldConnectedPlayer);
-				break;
-			}
-		}
-
-		Logger.Log($"HAMISH: Player: {currentConnectedPlayer.Name} steamid: {currentConnectedPlayer.SteamId}" +
-		           $" is joining for the first time.");
-		// Player is not rejoining so add him to the playerlist
-		Instance.Add(currentConnectedPlayer);
-	}
+            Logger.Log($"HAMISH: Player: {currentConnectedPlayer.Name} steamid: {currentConnectedPlayer.SteamId}" +
+                       $" is joining for the first time.");
+            // Player is not rejoining so add him to the playerlist
+            Instance.Add(currentConnectedPlayer);
+        }
 
 
 
-	[Server]
-	public void Rejoin(JoinedViewer joinedViewer, ConnectedPlayer currentConnectedPlayer,
-		ConnectedPlayer oldConnectedPlayer)
-	{
-		Debug.Log("ARAN: same steam ID");
-		loggedOff.Remove(oldConnectedPlayer);
-		values.Add(oldConnectedPlayer);
-		oldConnectedPlayer.Connection = currentConnectedPlayer.Connection;
+        [Server]
+        public void Rejoin(JoinedViewer joinedViewer, ConnectedPlayer currentConnectedPlayer,
+            ConnectedPlayer oldConnectedPlayer)
+        {
+            Debug.Log("ARAN: same steam ID");
+            loggedOff.Remove(oldConnectedPlayer);
+            //values.Add(oldConnectedPlayer);
+            //oldConnectedPlayer.Connection = currentConnectedPlayer.Connection;
 
-		Logger.Log($"HAMISH: Rejoining connectedPlayer name: {oldConnectedPlayer.Name}" +
-		           $" steamid: {oldConnectedPlayer.SteamId}");
-		SpawnHandler.TransferPlayer(currentConnectedPlayer.Connection, joinedViewer.playerControllerId,
-			oldConnectedPlayer.GameObject);
-	}
-
-	[Server]
+            Logger.Log($"HAMISH: Rejoining connectedPlayer name: {oldConnectedPlayer.Name}" +
+                       $" steamid: {oldConnectedPlayer.SteamId}");
+            SpawnHandler.TransferPlayer(currentConnectedPlayer.Connection, joinedViewer.playerControllerId,
+                oldConnectedPlayer.GameObject);
+        }
+    */
+    [Server]
 	public GameObject IsLoggedOff(ulong steamId)
 	{
 		foreach (var player in loggedOff)
 		{
 			if (player.SteamId == steamId)
 			{
+                Debug.Log("returning: " + player.GameObject);
+                loggedOff.Remove(player);
 				return player.GameObject;
 			}
 		}
