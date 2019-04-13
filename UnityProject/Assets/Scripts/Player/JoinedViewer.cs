@@ -20,75 +20,71 @@ public class JoinedViewer : NetworkBehaviour
 		base.OnStartServer();
 		//Add player to player list
 		isLoggedOff = PlayerList.Instance.IsLoggedOff(steamId);
-		Debug.Log($"HAMISH: OnServer() Is logged off = {isLoggedOff}");
 		PlayerList.Instance.Add(new ConnectedPlayer
 		{
 			Connection = connectionToClient,
 			GameObject = gameObject,
 			Job = JobType.NULL,
-            SteamId = steamId
+			SteamId = steamId
 		});
 	}
 
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
-        PlayerManager.SetViewerForControl(this);
-        UIManager.ResetAllUI();
-        if (isLoggedOff == null)
-        {
-            Debug.Log($"HAMISH: isLoggedOff IS NULL");
-	        UIManager.Display.DetermineGameMode();
-        }else{
-            Debug.Log($"HAMISH: isLoggedOff not null: {isLoggedOff}");
-            CmdRejoin();
-            Debug.Log("ARAN: CALING SET LOCAL PLAYER() YEEHAW");
-            isLoggedOff.GetComponent<PlayerSync>().setLocalPlayer();
-            isLoggedOff.GetComponent<PlayerScript>().Init();
-        }
-        UIManager.SetDeathVisibility(true);
+	public override void OnStartLocalPlayer()
+	{
+		base.OnStartLocalPlayer();
+		PlayerManager.SetViewerForControl(this);
+		UIManager.ResetAllUI();
+		if (isLoggedOff == null)
+		{
+			UIManager.Display.DetermineGameMode();
+		}else{
+			CmdRejoin();
+			isLoggedOff.GetComponent<PlayerSync>().setLocalPlayer();
+			isLoggedOff.GetComponent<PlayerScript>().Init();
+		}
+		UIManager.SetDeathVisibility(true);
 
-        if (BuildPreferences.isSteamServer)
-        {
-            //Send request to be authenticated by the server
-            StartCoroutine(WaitUntilServerInit());
-        }
-    }
+		if (BuildPreferences.isSteamServer)
+		{
+			//Send request to be authenticated by the server
+			StartCoroutine(WaitUntilServerInit());
+		}
+	}
 
 
-    //Just ensures connected player record is set on the server first before Auth req is sent
-    IEnumerator WaitUntilServerInit()
-    {
-        yield return YieldHelper.EndOfFrame;
-        if (Client.Instance != null)
-        {
-            Logger.Log("Client Requesting Auth", Category.Steam);
-            // Generate authentication Ticket
-            var ticket = Client.Instance.Auth.GetAuthSessionTicket();
-            var ticketBinary = ticket.Data;
-            // Send Clientmessage to authenticate
-            RequestAuthMessage.Send(Client.Instance.SteamId, ticketBinary);
-        }
-        else
-        {
-            Logger.Log("Client NOT requesting auth", Category.Steam);
-        }
-    }
+	//Just ensures connected player record is set on the server first before Auth req is sent
+	IEnumerator WaitUntilServerInit()
+	{
+		yield return YieldHelper.EndOfFrame;
+		if (Client.Instance != null)
+		{
+			Logger.Log("Client Requesting Auth", Category.Steam);
+			// Generate authentication Ticket
+			var ticket = Client.Instance.Auth.GetAuthSessionTicket();
+			var ticketBinary = ticket.Data;
+			// Send Clientmessage to authenticate
+			RequestAuthMessage.Send(Client.Instance.SteamId, ticketBinary);
+		}
+		else
+		{
+			Logger.Log("Client NOT requesting auth", Category.Steam);
+		}
+	}
 
-    /// <summary>
-    /// At the moment players can choose their jobs on round start:
-    /// </summary>
-    [Command]
-    public void CmdRequestJob(JobType jobType)
-    {
-        SpawnHandler.RespawnPlayer(connectionToClient, playerControllerId,
-            GameManager.Instance.GetRandomFreeOccupation(jobType));
-    }
+	/// <summary>
+	/// At the moment players can choose their jobs on round start:
+	/// </summary>
+	[Command]
+	public void CmdRequestJob(JobType jobType)
+	{
+		SpawnHandler.RespawnPlayer(connectionToClient, playerControllerId,
+			GameManager.Instance.GetRandomFreeOccupation(jobType));
+	}
 
-    [Command]
-    public void CmdRejoin()
-    {
-        Debug.Log("HAMISH: CmdRejoin()");
-	    SpawnHandler.TransferPlayer(connectionToClient, playerControllerId, isLoggedOff);
-    }
+	[Command]
+	public void CmdRejoin()
+	{
+		SpawnHandler.TransferPlayer(connectionToClient, playerControllerId, isLoggedOff);
+		isLoggedOff.GetComponent<PlayerScript>().playerNetworkActions.ReenterBodyUpdates(isLoggedOff);
+	}
 }

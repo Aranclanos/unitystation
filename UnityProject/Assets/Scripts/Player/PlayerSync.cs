@@ -298,7 +298,7 @@ public partial class PlayerSync : NetworkBehaviour, IPushable
 		{
 			// on server, must verify that position matches
 			if ((isServer && !other.PlayerScript.PlayerSync.IsMovingServer)
-			    || (!isServer && !other.PlayerScript.PlayerSync.IsMovingClient))
+				|| (!isServer && !other.PlayerScript.PlayerSync.IsMovingClient))
 			{
 				//they've stopped there, so let's swap them
 				InitiateSwap(other, targetWorldPos + inDirection.RoundToInt());
@@ -358,18 +358,10 @@ public partial class PlayerSync : NetworkBehaviour, IPushable
 	private void Start()
 	{
 		//Init pending actions queue for your local player
-        
-        if(isServer){
-            Debug.Log("ARAN: server PLAYER SYNC START " + gameObject.name);
-        }else{
-            Debug.Log("ARAN: client PLAYER SYNC START " + gameObject.name);
-        }
 		if (isLocalPlayer)
 		{
-            setLocalPlayer();
-		}else{
-            Debug.Log("ARAN: REE NOT LOCAL");
-        }
+			setLocalPlayer();
+		}
 		//Init pending actions queue for server
 		if (isServer)
 		{
@@ -382,12 +374,11 @@ public partial class PlayerSync : NetworkBehaviour, IPushable
 		pushPull = GetComponent<PushPull>();
 	}
 
-    public void setLocalPlayer(){
-        Debug.Log("ARAN: IS LOCAL PLAYER");
-        pendingActions = new Queue<PlayerAction>();
-        UpdatePredictedState();
-        predictedSpeedClient = UIManager.WalkRun.running ? playerMove.RunSpeed : playerMove.WalkSpeed;
-    }
+	public void setLocalPlayer(){
+		pendingActions = new Queue<PlayerAction>();
+		UpdatePredictedState();
+		predictedSpeedClient = UIManager.WalkRun.running ? playerMove.RunSpeed : playerMove.WalkSpeed;
+	}
 
 	private void Update()
 	{

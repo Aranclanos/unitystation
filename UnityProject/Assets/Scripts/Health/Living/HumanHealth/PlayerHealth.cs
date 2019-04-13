@@ -21,7 +21,6 @@ public class PlayerHealth : LivingHealthBehaviour
 
 	public override void OnStartClient()
 	{
-        Debug.Log("ARAN: ON START CLIENT PLAYER HEALTH");
 		playerNetworkActions = GetComponent<PlayerNetworkActions>();
 		playerMove = GetComponent<PlayerMove>();
 		registerPlayer = GetComponent<RegisterPlayer>();

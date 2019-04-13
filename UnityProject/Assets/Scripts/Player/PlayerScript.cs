@@ -104,7 +104,6 @@ public class PlayerScript : ManagedNetworkBehaviour
 	{
 		if (isLocalPlayer)
 		{
-            Debug.Log("ARAN: UImanager reset shit");
 			UIManager.ResetAllUI();
 			UIManager.SetDeathVisibility(true);
 			UIManager.DisplayManager.SetCameraFollowPos();
