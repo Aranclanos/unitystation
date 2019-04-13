@@ -84,7 +84,6 @@ public class PlayerManager : MonoBehaviour
 
 	public static void SetPlayerForControl(GameObject playerObjToControl)
 	{
-		Logger.Log("HAMISH: PlayerManager.SetPlayerForControl(Gameobject)");
 		LocalPlayer = playerObjToControl;
 		LocalPlayerScript = playerObjToControl.GetComponent<PlayerScript>();
 		Equipment = playerObjToControl.GetComponent<Equipment>();
