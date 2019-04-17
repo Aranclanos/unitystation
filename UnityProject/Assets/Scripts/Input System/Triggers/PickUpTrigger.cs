@@ -159,4 +159,27 @@ public class PickUpTrigger : InputTrigger
 			}
 		}
 	}
+
+    /// <summary>
+    /// disappear this object (while still keeping the explosion around)
+    /// </summary>
+    public void DisappearObject()
+    {
+        var customNetTransform = GetComponent<CustomNetTransform>();
+        if (isServer)
+        {
+            //make it vanish in the server's state of the world
+            //this currently removes it from the world and any player inventory
+
+            //If it is in an inventory slot it will be removed:
+            InventoryManager.DestroyItemInSlot(gameObject);
+
+            customNetTransform.DisappearFromWorldServer();
+        }
+        else
+        {
+            //make it vanish in the client's local world
+            customNetTransform.DisappearFromWorld();
+        }
+    }
 }

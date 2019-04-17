@@ -34,6 +34,7 @@ public class ProgressBar : NetworkBehaviour
 		FinishProgressAction finishProgressAction, GameObject _player,
 		string _additionalSfx = "", float _additionalSfxPitch = 1f)
 	{
+        Debug.Log("ARAN: StartProgress()");
 		var _playerSprites = _player.GetComponent<PlayerSprites>();
 		playerProgress.Add(new PlayerProgressEntry
 		{
@@ -175,7 +176,7 @@ public class FinishProgressAction
 	private TileType tileType;
 	private Vector3 cellPos;
 	private Vector3 worldPos; //worldPos of the action or tile
-	private MopTrigger theMop;
+	private PickUpTrigger theItem;
 
 	private GameObject originator;
 
@@ -190,11 +191,11 @@ public class FinishProgressAction
 		worldPos = _worldPos;
 		originator = _originator;
 	}
-	public FinishProgressAction(FinishProgressAction.Action cleanTile, Vector3 splatsPos, MopTrigger mop)
+	public FinishProgressAction(FinishProgressAction.Action cleanTile, Vector3 splatsPos, PickUpTrigger item)
 	{
 		actionType = cleanTile;
 		worldPos = splatsPos;
-		theMop = mop;
+		theItem = item;
 	}
 	public void DoAction()
 	{
@@ -214,7 +215,8 @@ public class FinishProgressAction
 
 	private void DoTileConstruction()
 	{
-		//TODO
+	    CraftingManager.Construction.TryWallConstruct(
+		    tileChangeManager, tileType, cellPos, worldPos);
 	}
 
 	private void DoTileDeconstruction()
@@ -225,6 +227,6 @@ public class FinishProgressAction
 
 	private void DoCleanTile()
 	{
-		theMop.CleanTile(worldPos);
+		theItem.GetComponent<MopTrigger>().CleanTile(worldPos);
 	}
 }
