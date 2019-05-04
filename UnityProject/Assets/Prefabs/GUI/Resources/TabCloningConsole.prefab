@@ -751,6 +751,12 @@ MonoBehaviour:
   isPopOut: 0
   Provider: {fileID: 0}
   Type: 7
+  CloningConsole: {fileID: 0}
+  CurrentScreen: 1
+  AllScreens: {fileID: 1124033667629164}
+  MainScreen: {fileID: 1983304827091576}
+  RecordListScreen: {fileID: 5794801367711838379}
+  SpecificRecordScreen: {fileID: 4895829638584642331}
 --- !u!1 &1891596644035688
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,7 +770,7 @@ GameObject:
   - component: {fileID: 114563664844050866}
   - component: {fileID: 114031281779385822}
   m_Layer: 5
-  m_Name: Text
+  m_Name: CloningProcessText1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1218,7 +1224,7 @@ GameObject:
   - component: {fileID: 1222181828765485540}
   - component: {fileID: 254428931489019858}
   m_Layer: 5
-  m_Name: Text
+  m_Name: CloningProcessText2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4950,7 +4956,7 @@ GameObject:
   - component: {fileID: 1642811030480877045}
   - component: {fileID: 8779569571992487574}
   m_Layer: 5
-  m_Name: Text
+  m_Name: ReadyToScanText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
