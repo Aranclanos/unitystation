@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,9 +14,9 @@ public class ClosetControl : InputTrigger
 	public List<GameObject> DefaultContents;
 
 	//Inventory
-	private List<ObjectBehaviour> heldItems = new List<ObjectBehaviour>();
+	private IEnumerable<ObjectBehaviour> heldItems = new List<ObjectBehaviour>();
 
-	private List<ObjectBehaviour> heldPlayers = new List<ObjectBehaviour>();
+	private IEnumerable<ObjectBehaviour> heldPlayers = new List<ObjectBehaviour>();
 
 	[SyncVar(hook = nameof(OpenClose))] public bool IsClosed;
 
@@ -204,7 +205,7 @@ public class ClosetControl : InputTrigger
 			return true;
 		}
 
-		bool isInReach = localPlayer.IsInReach(registerTile);
+		bool isInReach = localPlayer.IsInReach(registerTile, false);
 		if (isInReach || localPlayer.IsHidden)
 		{
 			if (IsClosed)
@@ -250,17 +251,16 @@ public class ClosetControl : InputTrigger
 	{
 		if (!isOpen)
 		{
-			heldItems = matrix.Get<ObjectBehaviour>(registerTile.Position, ObjectType.Item);
+			heldItems = matrix.Get<ObjectBehaviour>(registerTile.PositionServer, ObjectType.Item, true);
 		}
 
-		for (var i = 0; i < heldItems.Count; i++)
+		foreach ( ObjectBehaviour item in heldItems )
 		{
-			ObjectBehaviour item = heldItems[i];
 			CustomNetTransform netTransform = item.GetComponent<CustomNetTransform>();
 			if (isOpen)
 			{
 				//avoids blinking of premapped items when opening first time in another place:
-				Vector3Int pos = registerTile.WorldPosition;
+				Vector3Int pos = registerTile.WorldPositionServer;
 				netTransform.AppearAtPosition(pos);
 				item.parentContainer = null;
 				if (pushPull && pushPull.Pushable.IsMovingServer)
@@ -281,23 +281,28 @@ public class ClosetControl : InputTrigger
 
 			item.visibleState = isOpen;
 		}
+
+		if(isOpen)
+		{
+			// If open, no items are held anymore.
+			heldItems = Enumerable.Empty<ObjectBehaviour>();
+		}
 	}
 
 	private void SetPlayersAliveState(bool isOpen)
 	{
 		if (!isOpen)
 		{
-			heldPlayers = matrix.Get<ObjectBehaviour>(registerTile.Position, ObjectType.Player);
+			heldPlayers = matrix.Get<ObjectBehaviour>(registerTile.PositionServer, ObjectType.Player, true);
 		}
 
-		for (var i = 0; i < heldPlayers.Count; i++)
+		foreach ( ObjectBehaviour player in heldPlayers )
 		{
-			ObjectBehaviour player = heldPlayers[i];
 			var playerScript = player.GetComponent<PlayerScript>();
 			var playerSync = playerScript.PlayerSync;
 			if (isOpen)
 			{
-				playerSync.AppearAtPositionServer(registerTile.WorldPosition);
+				playerSync.AppearAtPositionServer(registerTile.WorldPositionServer);
 				player.parentContainer = null;
 				if (pushPull && pushPull.Pushable.IsMovingServer)
 				{
@@ -312,8 +317,8 @@ public class ClosetControl : InputTrigger
 			{
 				player.parentContainer = objectBehaviour;
 				playerSync.DisappearFromWorldServer();
-                //Make sure a ClosetPlayerHandler is created on the client to monitor
-                //the players input inside the storage. The handler also controls the camera follow targets:
+				//Make sure a ClosetPlayerHandler is created on the client to monitor
+				//the players input inside the storage. The handler also controls the camera follow targets:
 				if (!playerScript.IsGhost)
 				{
 					ClosetHandlerMessage.Send(player.gameObject, gameObject);
