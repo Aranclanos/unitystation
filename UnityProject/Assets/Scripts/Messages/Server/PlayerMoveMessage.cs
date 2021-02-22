@@ -59,7 +59,7 @@ public class PlayerMoveMessage : ServerMessage
 			//Send ghost positions only to ghosts
 			foreach (var connectedPlayer in PlayerList.Instance.InGamePlayers)
 			{
-				if (PlayerUtils.IsGhost(connectedPlayer.GameObject))
+				if (PlayerUtils.IsGhost(connectedPlayer.GameObject) || connectedPlayer.Script.isLocalPlayer) //update server too
 				{
 					Send(connectedPlayer.Connection, subjectPlayer, state);
 				}
