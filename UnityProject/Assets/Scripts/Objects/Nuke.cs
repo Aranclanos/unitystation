@@ -60,8 +60,7 @@ namespace Objects.Command
 			}
 		}
 
-		private bool detonated = false;
-		public bool IsDetonated => detonated;
+		public static bool detonated;
 
 		private string currentCode = "";
 		public string CurrentCode => currentCode;
@@ -76,6 +75,7 @@ namespace Objects.Command
 			objectBehaviour = GetComponent<ObjectBehaviour>();
 			itemNuke = GetComponent<ItemStorage>();
 			nukeSlot = itemNuke.GetIndexedItemSlot(0);
+			detonated = false;
 		}
 
 		public void OnSpawnServer(SpawnInfo info)
@@ -83,6 +83,10 @@ namespace Objects.Command
 			if (SubSceneManager.Instance.SyndicateScene == gameObject.scene)
 			{
 				nukeCode = AntagManager.SyndiNukeCode;
+			}
+			else if (GetComponent<RegisterTile>().Matrix.IsMainStation)
+			{
+				nukeCode = AntagManager.StationNukeCode;
 			}
 			else
 			{
@@ -137,12 +141,6 @@ namespace Objects.Command
 		[ClientRpc]
 		void RpcDetonate()
 		{
-			if (detonated)
-			{
-				return;
-			}
-			detonated = true;
-
 			SoundAmbientManager.StopAllAudio();
 			//turning off all the UI except for the right panel
 			UIManager.PlayerHealthUI.gameObject.SetActive(false);

@@ -141,7 +141,7 @@ namespace UI.Objects.Command
 			if (IsServer)
 			{
 				//	Logger.Log( $"{name} Kinda init. Nuke code is {NukeInteract.NukeCode}" );
-				InitialInfoText = $"Enter {Nuke.NukeCode.ToString().Length}-digit code:";
+				InitialInfoText = $"Enter 4-digit code:";
 				InfoNukeDisplay.SetValueServer("Insert the disk!");
 				if (!Nuke.IsAncharable)
 				{

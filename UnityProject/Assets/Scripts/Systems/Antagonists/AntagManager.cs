@@ -38,6 +38,7 @@ namespace Antagonists
 		[NonSerialized] public List<GameObject> TargetedItems = new List<GameObject>();
 
 		public static int SyndiNukeCode;
+		public static int StationNukeCode;
 
 		public GameObject blobPlayerViewer = null;
 
@@ -68,6 +69,7 @@ namespace Antagonists
 		void OnSceneChange(Scene oldScene, Scene newScene)
 		{
 			SyndiNukeCode = Nuke.CodeGenerator();
+			StationNukeCode = Nuke.CodeGenerator();
 		}
 
 		void OnRoundEnd()
